@@ -41,8 +41,7 @@ async function run() {
         // collection
         const Products = client.db("Twist").collection('Products')
 
-        // api's 
-        // todo: full api read and buja
+        //    api's
         app.get('/Products', async (req, res) => {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 6;
@@ -52,7 +51,7 @@ async function run() {
             const totalPages = Math.ceil(totalProducts / limit);
 
             const result = await Products.find().skip(skip).limit(limit).toArray();
-            res.send({result,totalPages})
+            res.send({ result, totalPages })
         })
 
 

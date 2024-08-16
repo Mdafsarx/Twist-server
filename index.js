@@ -61,7 +61,7 @@ async function run() {
 
             const result = await Products.find(query).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages })
-        })
+        })      
 
   
 

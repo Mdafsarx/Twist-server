@@ -47,14 +47,23 @@ async function run() {
             const limit = parseInt(req.query.limit) || 6;
             const skip = (page - 1) * limit;
 
+            const search= req.query.search;
+            let query = {};
+            if (req.query.search) {
+              query = {
+                productName: { $regex: search, $options: "i" }
+              }
+            }
+
+
             const totalProducts = await Products.countDocuments();
             const totalPages = Math.ceil(totalProducts / limit);
 
-            const result = await Products.find().skip(skip).limit(limit).toArray();
+            const result = await Products.find(query).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages })
         })
 
-
+  
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");

@@ -47,23 +47,38 @@ async function run() {
             const limit = parseInt(req.query.limit) || 6;
             const skip = (page - 1) * limit;
 
-            const search= req.query.search;
+            const search = req.query.search || ''
+            const category = req.query.category || ''
+            const brand = req.query.brand || ''
+            const price = req.query.price || ''
+            console.log(price)
+            const [minPrice, maxPrice] = price.split('-').map(Number);
+
             let query = {};
-            if (req.query.search) {
-              query = {
-                productName: { $regex: search, $options: "i" }
-              }
+            if (search) {
+                query = {
+                    productName: { $regex: search, $options: "i" }
+                }
+            } else if (category) {
+                query = { category: category }
+            } else if (brand) {
+                query = { brand: brand }
+            } else if (price) {
+                if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+                    // gte and lte buja klk
+                    query = { price: { $gte: minPrice, $lte: maxPrice } };
+                }
             }
 
 
-            const totalProducts = await Products.countDocuments();
+            const totalProducts = await Products.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / limit);
 
             const result = await Products.find(query).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages })
-        })      
+        })
 
-  
+
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");

@@ -7,14 +7,6 @@ Welcome to Twist , your ultimate solution for discovering, filtering, and managi
 - Client site [here](https://github.com/Mdafsarx/Twist-client)
 
 
-
-
-## NPM Packages Used
-- react-paginate
-- react-router-dom
-- react-hot-toast
-
-
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.

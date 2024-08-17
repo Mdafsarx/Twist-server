@@ -1,7 +1,8 @@
-const express = require("express");
-require("dotenv").config();
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,14 +10,17 @@ app.use(cors());
 app.use(express.json());
 app.use(
     cors({
-        origin: ["http://localhost:5173"],
+        origin: ["http://localhost:5173","https://twistt.netlify.app"],
         credentials: true,
     })
 );
-
 app.get("/", (req, res) => {
     res.send("The server is running");
 });
+
+
+
+
 // data-base mongodb
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PAS}@cluster0.zgmhkd0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -46,13 +50,13 @@ async function run() {
             const sort = req.query.sort || 0
             console.log(sort)
             const [minPrice, maxPrice] = price.split("-").map(Number);
-            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "newest first" ? -1 : 0
+            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "newest first" ? -1 : sort=== "oldest first" ? 1 : 0
 
             // due to implement: date newest first 
             let sortBy={}
             if(sort==='low to high'||sort==='high to low'){
                 sortBy={ "price": sortOrder }
-            }else if(sort==="newest first"){
+            }else if(sort==="newest first"||sort==="oldest first"){
                 sortBy={ "creationDate": sortOrder }
             }
 

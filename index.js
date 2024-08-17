@@ -46,11 +46,14 @@ async function run() {
             const sort = req.query.sort || 0
             console.log(sort)
             const [minPrice, maxPrice] = price.split("-").map(Number);
-            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "Newest first" ? 1 : 0
-            
+            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "newest first" ? -1 : 0
+
+            // due to implement: date newest first 
             let sortBy={}
-            if(sort){
+            if(sort==='low to high'||sort==='high to low'){
                 sortBy={ "price": sortOrder }
+            }else if(sort==="newest first"){
+                sortBy={ "creationDate": sortOrder }
             }
 
 

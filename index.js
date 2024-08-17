@@ -43,8 +43,16 @@ async function run() {
             const category = req.query.category || "";
             const brand = req.query.brand || "";
             const price = req.query.price || "";
+            const sort = req.query.sort || 0
+            console.log(sort)
             const [minPrice, maxPrice] = price.split("-").map(Number);
-            console.log(category, brand, price);
+            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "Newest first" ? 1 : 0
+            
+            let sortBy={}
+            if(sort){
+                sortBy={ "price": sortOrder }
+            }
+
 
             let query = {};
             if (category && brand && !isNaN(minPrice) && !isNaN(maxPrice)) {
@@ -79,10 +87,7 @@ async function run() {
             const totalProducts = await Products.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / limit);
 
-            const result = await Products.find(query)
-                .skip(skip)
-                .limit(limit)
-                .toArray();
+            const result = await Products.find(query).sort(sortBy).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages });
         });
 

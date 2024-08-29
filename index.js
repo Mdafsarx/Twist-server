@@ -37,7 +37,7 @@ async function run() {
         // collection
         const Products = client.db("Twist").collection("Products");
 
-        //    api's
+        // api's
         app.get("/Products", async (req, res) => {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 6;
@@ -97,6 +97,12 @@ async function run() {
             const result = await Products.find(query).sort(sortBy).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages });
         });
+
+        
+        app.get("/Product",async(req,res)=>{
+         const result=await Products.find().toArray()
+         res.send(result)
+        })
 
         await client.db("admin").command({ ping: 1 });
         console.log(

@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(
     cors({
-        origin: ["http://localhost:5173","https://twistt.netlify.app"],
+        origin: ["http://localhost:5173", "https://twistt.netlify.app"],
         credentials: true,
     })
 );
@@ -36,6 +36,7 @@ async function run() {
     try {
         // collection
         const Products = client.db("Twist").collection("Products");
+        const Cart = client.db("Twist").collection("Cart");
 
         // api's
         app.get("/Products", async (req, res) => {
@@ -50,14 +51,14 @@ async function run() {
             const sort = req.query.sort || 0
             console.log(sort)
             const [minPrice, maxPrice] = price.split("-").map(Number);
-            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "newest first" ? -1 : sort=== "oldest first" ? 1 : 0
+            const sortOrder = sort === "low to high" ? 1 : sort === "high to low" ? -1 : sort === "newest first" ? -1 : sort === "oldest first" ? 1 : 0
 
             // due to implement: date newest first 
-            let sortBy={}
-            if(sort==='low to high'||sort==='high to low'){
-                sortBy={ "price": sortOrder }
-            }else if(sort==="newest first"||sort==="oldest first"){
-                sortBy={ "creationDate": sortOrder }
+            let sortBy = {}
+            if (sort === 'low to high' || sort === 'high to low') {
+                sortBy = { "price": sortOrder }
+            } else if (sort === "newest first" || sort === "oldest first") {
+                sortBy = { "creationDate": sortOrder }
             }
 
 
@@ -97,11 +98,18 @@ async function run() {
             const result = await Products.find(query).sort(sortBy).skip(skip).limit(limit).toArray();
             res.send({ result, totalPages });
         });
-
-        
-        app.get("/Product",async(req,res)=>{
-         const result=await Products.find().toArray()
-         res.send(result)
+        app.get("/Product", async (req, res) => {
+            const result = await Products.find().toArray()
+            res.send(result)
+        })
+        // cart
+        app.post('/Cart', async (req, res) => {
+            const result = await Cart.insertOne(req.body);
+            res.send(result)
+        })
+        app.get('/Cart', async (req, res) => {
+            const result = await Cart.find({email:req.query.email}).toArray();
+            res.send(result)
         })
 
         await client.db("admin").command({ ping: 1 });
@@ -110,7 +118,7 @@ async function run() {
         );
     } finally {
     }
-}  
+}
 
 run().catch(console.dir);
 app.listen(port, () => {

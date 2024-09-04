@@ -102,6 +102,7 @@ async function run() {
             const result = await Products.find().toArray()
             res.send(result)
         })
+
         // cart
         app.post('/Cart', async (req, res) => {
             const result = await Cart.insertOne(req.body);
@@ -111,6 +112,14 @@ async function run() {
             const result = await Cart.find({email:req.query.email}).toArray();
             res.send(result)
         })
+
+        // cart delete mul
+        app.delete('/Cart',async (req,res)=>{
+          const result= await Cart.deleteMany({email:req.query.email});
+          res.send(result);
+        })
+
+
 
         await client.db("admin").command({ ping: 1 });
         console.log(
